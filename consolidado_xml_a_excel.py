@@ -1,4 +1,3 @@
-import getpass
 import hashlib
 import json
 import os
@@ -747,12 +746,10 @@ def activacion_valida(script_hash):
 
 
 def pedir_clave_activacion():
-    if sys.stdin.isatty():
-        clave = getpass.getpass("Clave de instalacion: ")
-    else:
-        print("Clave de instalacion: ", end="", flush=True)
-        clave = sys.stdin.readline()
-    return clave.strip()
+    print("Clave de instalacion: ", end="", flush=True)
+    clave = sys.stdin.readline()
+    clave = clave.strip().strip('"').strip("'")
+    return clave.replace("\ufeff", "").replace("\u200b", "")
 
 
 def verificar_activacion():

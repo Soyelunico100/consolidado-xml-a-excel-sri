@@ -9,8 +9,22 @@ echo.
 
 if not exist ".venv\Scripts\python.exe" (
     echo Creando entorno virtual .venv...
-    py -3 -m venv .venv
-    if errorlevel 1 (
+    where py >nul 2>nul
+    if "%ERRORLEVEL%"=="0" (
+        py -3 -m venv .venv
+    ) else (
+        where python >nul 2>nul
+        if "%ERRORLEVEL%"=="0" (
+            python -m venv .venv
+        ) else (
+            echo No se encontro Python en esta computadora.
+            echo Instala Python 3.10 o superior desde https://www.python.org/downloads/
+            echo Durante la instalacion marca Add python.exe to PATH.
+            pause
+            exit /b 1
+        )
+    )
+    if not exist ".venv\Scripts\python.exe" (
         python -m venv .venv
     )
 )
