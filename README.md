@@ -12,14 +12,14 @@ Programa local en Python para convertir XML autorizados del SRI Ecuador a un arc
 6. Escribe la clave de instalacion cuando el programa la pida por primera vez.
 7. Revisa o descarga el Excel generado en la ruta de salida configurada.
 
-Al terminar, los XML procesados correctamente se mueven a `procesados`. Los XML no reconocidos o con error se mueven a `errores`.
-
 ## Carpetas
 
 - `XML` o la carpeta XML configurada: aqui se colocan los XML del SRI.
-- Ruta de salida configurada: aqui se genera el Excel.
-- `procesados`: aqui se mueven los XML que ya fueron procesados.
-- `errores`: aqui se mueven los XML con problema.
+- `PDF Compras`: aqui se colocan PDF de compras.
+- `PDF Notas de Credito Recibidas`: aqui se colocan PDF de notas de credito recibidas.
+- `PDF Retenciones Recibidas`: aqui se colocan PDF de retenciones recibidas.
+- `PDF VENTAS Y RETENCIONES EMITIDAS`: aqui se colocan PDF de ventas y retenciones emitidas.
+- `Python consolidado XML a Excel`: aqui se genera el Excel.
 - `ejemplos`: contiene XML ficticios para pruebas. No contiene informacion real.
 
 ## App web local
@@ -67,4 +67,4 @@ Para probar sin datos reales:
 1. Ejecuta `abrir_app_web.bat`.
 2. Copia `ejemplos\factura_ficticia.xml` dentro de la carpeta XML configurada.
 3. Presiona `EXTRAER INFORMACION A EXCEL`.
-4. Confirma que se cree un Excel dentro de `salida_excel`.
+4. Confirma que se cree un Excel dentro de la carpeta Python consolidado XML a Excel.

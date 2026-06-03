@@ -28,10 +28,6 @@ def default_paths():
     return {
         "base": str(BASE_DIR),
         "xml": str(BASE_DIR / "XML"),
-        "salida": str(BASE_DIR),
-        "procesados": str(BASE_DIR / "procesados"),
-        "errores": str(BASE_DIR / "errores"),
-        "pdf_root": str(BASE_DIR / "PDF"),
         "pdf_compras": str(BASE_DIR / "PDF" / "PDF Compras"),
         "pdf_nc": str(BASE_DIR / "PDF" / "PDF Notas de Credito Recibidas"),
         "pdf_ret": str(BASE_DIR / "PDF" / "PDF Retenciones Recibidas"),
@@ -68,18 +64,20 @@ def save_paths(data):
 
 def apply_paths(data=None):
     data = data or load_paths()
+    base = Path(data["base"])
+    converter.BASE_DIR = base
     converter.XML_FOLDER = Path(data["xml"])
-    converter.SALIDA_EXCEL_DIR = Path(data["salida"])
-    converter.PROCESADOS_DIR = Path(data["procesados"])
-    converter.ERRORES_DIR = Path(data["errores"])
-    converter.PDF_ROOT_DIR = Path(data["pdf_root"])
+    converter.SALIDA_EXCEL_DIR = base
+    converter.PROCESADOS_DIR = base / "procesados"
+    converter.ERRORES_DIR = base / "errores"
+    converter.PDF_ROOT_DIR = base / "PDF"
     converter.PDF_COMPRAS_FOLDER = Path(data["pdf_compras"])
     converter.PDF_NC_RECIBIDAS_FOLDER = Path(data["pdf_nc"])
     converter.PDF_RET_RECIBIDAS_FOLDER = Path(data["pdf_ret"])
     converter.PDF_VENTAS_FOLDER = Path(data["pdf_ventas"])
-    converter.EXCEL_FILE = converter.SALIDA_EXCEL_DIR / "Consolidado XML.xlsx"
-    converter.BASE_DIR = Path(data.get("base") or BASE_DIR)
-    converter.ATS_DIR = converter.BASE_DIR / "ATS"
+    converter.EXCEL_FILE = base / "Consolidado XML.xlsx"
+    converter.ATS_DIR = base / "ATS"
+    converter.MOVER_XML_PROCESADOS = False
     return data
 
 
@@ -88,8 +86,6 @@ def ensure_folders():
     for folder in (
         converter.XML_FOLDER,
         converter.SALIDA_EXCEL_DIR,
-        converter.PROCESADOS_DIR,
-        converter.ERRORES_DIR,
         converter.PDF_ROOT_DIR,
         converter.PDF_COMPRAS_FOLDER,
         converter.PDF_NC_RECIBIDAS_FOLDER,
@@ -188,8 +184,6 @@ def render_page(message="", log=""):
     paths = load_paths()
     entrada = list_files(converter.XML_FOLDER, "*.xml")
     salidas = list_files(converter.SALIDA_EXCEL_DIR, "*.xlsx")
-    procesados = list_files(converter.PROCESADOS_DIR, "*.xml")
-    errores = list_files(converter.ERRORES_DIR, "*.xml")
 
     def file_rows(files, kind):
         if not files:
@@ -211,10 +205,6 @@ def render_page(message="", log=""):
     path_inputs = [
         ("base", "Python consolidado XML a Excel"),
         ("xml", "Carpeta XML"),
-        ("salida", "Salida Excel"),
-        ("procesados", "Procesados"),
-        ("errores", "Errores"),
-        ("pdf_root", "Carpeta PDF"),
         ("pdf_compras", "PDF Compras"),
         ("pdf_nc", "PDF Notas de credito recibidas"),
         ("pdf_ret", "PDF Retenciones recibidas"),
@@ -397,10 +387,8 @@ def render_page(message="", log=""):
       </section>
     </div>
     <div class="cards">
-      <section class="panel"><h2>Entrada XML ({len(entrada)})</h2>{file_rows(entrada, "entrada")}</section>
-      <section class="panel"><h2>Salida Excel ({len(salidas)})</h2>{file_rows(salidas, "salida")}</section>
-      <section class="panel"><h2>Procesados ({len(procesados)})</h2>{file_rows(procesados, "procesados")}</section>
-      <section class="panel"><h2>Errores ({len(errores)})</h2>{file_rows(errores, "errores")}</section>
+      <section class="panel"><h2>XML encontrados ({len(entrada)})</h2>{file_rows(entrada, "entrada")}</section>
+      <section class="panel"><h2>Excel generados ({len(salidas)})</h2>{file_rows(salidas, "salida")}</section>
     </div>
   </main>
 </body>
@@ -487,8 +475,6 @@ class AppHandler(BaseHTTPRequestHandler):
         folders = {
             "entrada": converter.XML_FOLDER,
             "salida": converter.SALIDA_EXCEL_DIR,
-            "procesados": converter.PROCESADOS_DIR,
-            "errores": converter.ERRORES_DIR,
         }
         if kind not in folders or not name:
             self.send_error(404)

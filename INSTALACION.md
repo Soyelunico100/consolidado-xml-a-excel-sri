@@ -35,10 +35,15 @@ abrir_app_web.bat
 
 2. Se abrira una pantalla local en el navegador.
 
-3. Carga tus XML reales del SRI desde la pantalla web o copialos manualmente en:
+3. En la pantalla web, guarda las rutas de:
 
 ```text
-entrada_xml
+Python consolidado XML a Excel
+Carpeta XML
+PDF Compras
+PDF Notas de Credito Recibidas
+PDF Retenciones Recibidas
+PDF Ventas y Retenciones Emitidas
 ```
 
 4. Presiona:
@@ -55,10 +60,10 @@ ejecutar.bat
 
 5. La primera vez en cada computadora, escribe la clave de instalacion.
 
-6. El Excel se generara en:
+6. El Excel se generara en la carpeta:
 
 ```text
-salida_excel
+Python consolidado XML a Excel
 ```
 
 ## Rutas relativas
@@ -70,10 +75,8 @@ Esto permite mover o descargar el proyecto en otra computadora sin cambiar confi
 ## Solucion de problemas
 
 - Si `instalar.bat` falla, revisa que Python este instalado y disponible en PATH.
-- Si falla instalando `streamlit`, descarga la version actualizada del repositorio: Streamlit ya no es necesario para el uso normal.
-- Si el Excel no se guarda, cierra cualquier archivo Excel abierto en `salida_excel` y vuelve a ejecutar.
-- Si un XML aparece en `errores`, revisa que sea un XML autorizado del SRI y que no este incompleto.
-- Si no aparece ningun dato, confirma que los XML esten dentro de `entrada_xml`.
+- Si el Excel no se guarda, cierra cualquier archivo Excel abierto en la carpeta de salida y vuelve a ejecutar.
+- Si no aparece ningun dato, confirma que los XML esten dentro de la carpeta XML configurada.
 
 ## Subir a GitHub
 

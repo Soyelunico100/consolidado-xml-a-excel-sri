@@ -21,22 +21,20 @@ class RutasRelativasTest(unittest.TestCase):
             temp_root = Path(tmp)
             shutil.copy2(ROOT / "consolidado_xml_a_excel.py", temp_root / "consolidado_xml_a_excel.py")
 
-            entrada = temp_root / "entrada_xml"
+            entrada = temp_root / "XML"
             entrada.mkdir()
             shutil.copy2(ROOT / "ejemplos" / "factura_ficticia.xml", entrada / "factura_ficticia.xml")
 
             module = load_module_from(temp_root / "consolidado_xml_a_excel.py")
             module.REQUIERE_ACTIVACION = False
             module.GENERAR_XML_ATS = False
-            module.MOVER_XML_PROCESADOS = True
+            module.MOVER_XML_PROCESADOS = False
             module.main()
 
-            self.assertEqual(module.XML_FOLDER, temp_root / "entrada_xml")
-            self.assertEqual(module.SALIDA_EXCEL_DIR, temp_root / "salida_excel")
-            self.assertTrue((temp_root / "salida_excel").exists())
-            self.assertTrue((temp_root / "procesados" / "factura_ficticia.xml").exists())
-            self.assertEqual(list((temp_root / "errores").glob("*.xml")), [])
-            self.assertGreater(len(list((temp_root / "salida_excel").glob("*.xlsx"))), 0)
+            self.assertEqual(module.XML_FOLDER, temp_root / "XML")
+            self.assertEqual(module.SALIDA_EXCEL_DIR, temp_root)
+            self.assertTrue((temp_root / "XML" / "factura_ficticia.xml").exists())
+            self.assertGreater(len(list(temp_root.glob("*.xlsx"))), 0)
 
 
 if __name__ == "__main__":

@@ -49,7 +49,8 @@ PDF_RECURSIVE = True
 ATS_FICHA_TECNICA_PDF_MANUAL = ""
 
 # Si esta activo, mueve XML exitosos a procesados y XML con error a errores.
-MOVER_XML_PROCESADOS = True
+# En la app web se mantiene en False para trabajar solo con las carpetas configuradas.
+MOVER_XML_PROCESADOS = False
 
 # False deja los importes como numeros reales: 4.46
 DECIMALES_CON_COMA = False
@@ -201,10 +202,10 @@ else:
 CONFIG_DIR = BASE_DIR / "CONFIGURACION"
 ATS_DIR = BASE_DIR / "ATS"
 PDF_ROOT_DIR = BASE_DIR / "PDF"
-SALIDA_EXCEL_DIR = BASE_DIR / "salida_excel"
+SALIDA_EXCEL_DIR = BASE_DIR
 PROCESADOS_DIR = BASE_DIR / "procesados"
 ERRORES_DIR = BASE_DIR / "errores"
-XML_FOLDER = Path(XML_FOLDER_MANUAL) if XML_FOLDER_MANUAL.strip() else BASE_DIR / "entrada_xml"
+XML_FOLDER = Path(XML_FOLDER_MANUAL) if XML_FOLDER_MANUAL.strip() else BASE_DIR / "XML"
 PDF_COMPRAS_FOLDER = PDF_ROOT_DIR / "PDF Compras"
 PDF_NC_RECIBIDAS_FOLDER = PDF_ROOT_DIR / "PDF Notas de Credito Recibidas"
 PDF_RET_RECIBIDAS_FOLDER = PDF_ROOT_DIR / "PDF Retenciones Recibidas"
@@ -3248,7 +3249,10 @@ def move_xml_files(files, destination):
 
 
 def main():
-    for folder in (XML_FOLDER, SALIDA_EXCEL_DIR, PROCESADOS_DIR, ERRORES_DIR):
+    base_folders = [XML_FOLDER, SALIDA_EXCEL_DIR]
+    if MOVER_XML_PROCESADOS:
+        base_folders.extend([PROCESADOS_DIR, ERRORES_DIR])
+    for folder in base_folders:
         folder.mkdir(parents=True, exist_ok=True)
 
     verificar_activacion()
