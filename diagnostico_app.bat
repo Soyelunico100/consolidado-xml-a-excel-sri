@@ -29,7 +29,7 @@ if exist ".venv\Scripts\python.exe" (
 ) else (
     echo AVISO: No existe .venv\Scripts\python.exe.
     where python >nul 2>nul
-    if "%ERRORLEVEL%"=="0" (
+    if not errorlevel 1 (
         python --version
     ) else (
         echo ERROR: Python no esta disponible en PATH.

@@ -16,21 +16,24 @@ if exist ".venv\Scripts\python.exe" (
     ".venv\Scripts\python.exe" "app_web.py"
 ) else (
     where py >nul 2>nul
-    if "%ERRORLEVEL%"=="0" (
+    if not errorlevel 1 (
         py -3 "app_web.py"
-    ) else (
-        where python >nul 2>nul
-        if "%ERRORLEVEL%"=="0" (
-            python "app_web.py"
-        ) else (
-            echo No se encontro Python.
-            echo Ejecuta instalar.bat o instala Python marcando Add python.exe to PATH.
-            pause
-            exit /b 1
-        )
+        goto fin
     )
+
+    where python >nul 2>nul
+    if not errorlevel 1 (
+        python "app_web.py"
+        goto fin
+    )
+
+    echo No se encontro Python.
+    echo Ejecuta instalar.bat o instala Python marcando Add python.exe to PATH.
+    pause
+    exit /b 1
 )
 
+:fin
 echo.
 echo El servidor se cerro.
 pause
