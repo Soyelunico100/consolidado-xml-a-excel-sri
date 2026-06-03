@@ -1,4 +1,3 @@
-import cgi
 import html
 import mimetypes
 import os
@@ -7,10 +6,14 @@ import subprocess
 import sys
 import threading
 import traceback
+import warnings
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
+
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="cgi")
+import cgi
 
 import consolidado_xml_a_excel as converter
 
@@ -426,8 +429,9 @@ def main():
     url = f"http://{HOST}:{PORT}"
     server = ThreadingHTTPServer((HOST, PORT), AppHandler)
     threading.Timer(0.8, lambda: webbrowser.open(url)).start()
-    print(f"App abierta en {url}")
-    print("Cierra esta ventana para apagar la app.")
+    print(f"App abierta en {url}", flush=True)
+    print("Si el navegador no se abre solo, copia esa direccion en Chrome.", flush=True)
+    print("Cierra esta ventana para apagar la app.", flush=True)
     server.serve_forever()
 
 
