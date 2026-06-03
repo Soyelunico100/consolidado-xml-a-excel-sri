@@ -26,8 +26,9 @@ CONFIG_PATH = converter.CONFIG_DIR / "rutas_app_web.json"
 
 def default_paths():
     return {
-        "xml": str(BASE_DIR / "entrada_xml"),
-        "salida": str(BASE_DIR / "salida_excel"),
+        "base": str(BASE_DIR),
+        "xml": str(BASE_DIR / "XML"),
+        "salida": str(BASE_DIR),
         "procesados": str(BASE_DIR / "procesados"),
         "errores": str(BASE_DIR / "errores"),
         "pdf_root": str(BASE_DIR / "PDF"),
@@ -77,6 +78,8 @@ def apply_paths(data=None):
     converter.PDF_RET_RECIBIDAS_FOLDER = Path(data["pdf_ret"])
     converter.PDF_VENTAS_FOLDER = Path(data["pdf_ventas"])
     converter.EXCEL_FILE = converter.SALIDA_EXCEL_DIR / "Consolidado XML.xlsx"
+    converter.BASE_DIR = Path(data.get("base") or BASE_DIR)
+    converter.ATS_DIR = converter.BASE_DIR / "ATS"
     return data
 
 
@@ -206,6 +209,7 @@ def render_page(message="", log=""):
     message_html = f'<div class="notice">{html.escape(message)}</div>' if message else ""
     log_html = f"<pre>{html.escape(log)}</pre>" if log else ""
     path_inputs = [
+        ("base", "Python consolidado XML a Excel"),
         ("xml", "Carpeta XML"),
         ("salida", "Salida Excel"),
         ("procesados", "Procesados"),
@@ -362,10 +366,14 @@ def render_page(message="", log=""):
     {message_html}
     <div class="grid">
       <section class="panel">
-        <h2>Procesar XML</h2>
-        <form class="actions" method="post" action="/upload" enctype="multipart/form-data">
-          <input type="file" name="files" accept=".xml" multiple>
-          <button class="primary" type="submit">CARGAR XML A ENTRADA</button>
+        <h2>Rutas guardadas</h2>
+        <form class="routes open" method="post" action="/save_paths">
+          {rutas_html}
+          <div class="route-actions">
+            <button class="primary" type="submit">GUARDAR RUTAS</button>
+            <button class="light" type="submit" formaction="/reset_paths">RESTAURAR</button>
+          </div>
+          <div class="empty">El programa lee los XML y PDF desde estas carpetas. No es necesario cargar archivos desde la web.</div>
         </form>
         <form class="actions" method="post" action="/process" style="margin-top:12px">
           <input name="clave" type="password" placeholder="Clave de instalacion si es la primera vez" autocomplete="off">
@@ -373,15 +381,6 @@ def render_page(message="", log=""):
         </form>
         <form class="actions" method="post" action="/clear" style="margin-top:12px">
           <button class="danger" type="submit">ELIMINAR XML Y PDF DESCARGADOS</button>
-        </form>
-        <button class="light" type="button" onclick="document.querySelector('.routes').classList.toggle('open')">MODIFICAR RUTA</button>
-        <form class="routes" method="post" action="/save_paths">
-          {rutas_html}
-          <div class="route-actions">
-            <button class="primary" type="submit">GUARDAR</button>
-            <button class="light" type="submit" formaction="/reset_paths">RESTAURAR</button>
-          </div>
-          <div class="empty">Pega rutas completas de esta computadora. Se guardan para futuras ejecuciones.</div>
         </form>
         <div class="actions" style="margin-top:12px">
           <a class="button light" href="/open?folder=base">ABRIR CARPETA DEL PROGRAMA</a>
@@ -514,7 +513,8 @@ class AppHandler(BaseHTTPRequestHandler):
     def handle_open(self, parsed):
         query = parse_qs(parsed.query)
         folder = query.get("folder", ["base"])[0]
-        target = converter.SALIDA_EXCEL_DIR if folder == "salida" else BASE_DIR
+        paths = load_paths()
+        target = converter.SALIDA_EXCEL_DIR if folder == "salida" else Path(paths.get("base") or BASE_DIR)
         open_in_explorer(target)
         self.send_html(render_page("Carpeta abierta en Windows."))
 

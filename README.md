@@ -6,17 +6,18 @@ Programa local en Python para convertir XML autorizados del SRI Ecuador a un arc
 
 1. Ejecuta `instalar.bat` una sola vez.
 2. Ejecuta `abrir_app_web.bat`.
-3. En la pantalla web local, carga tus XML.
-4. Presiona `EXTRAER INFORMACION A EXCEL`.
-5. Escribe la clave de instalacion cuando el programa la pida por primera vez.
-6. Revisa o descarga el Excel generado en `salida_excel`.
+3. En la pantalla web local, revisa o cambia las rutas guardadas.
+4. Coloca tus XML y PDF en las carpetas configuradas.
+5. Presiona `EXTRAER INFORMACION A EXCEL`.
+6. Escribe la clave de instalacion cuando el programa la pida por primera vez.
+7. Revisa o descarga el Excel generado en la ruta de salida configurada.
 
 Al terminar, los XML procesados correctamente se mueven a `procesados`. Los XML no reconocidos o con error se mueven a `errores`.
 
 ## Carpetas
 
-- `entrada_xml`: aqui se colocan los XML del SRI.
-- `salida_excel`: aqui se genera el Excel.
+- `XML` o la carpeta XML configurada: aqui se colocan los XML del SRI.
+- Ruta de salida configurada: aqui se genera el Excel.
 - `procesados`: aqui se mueven los XML que ya fueron procesados.
 - `errores`: aqui se mueven los XML con problema.
 - `ejemplos`: contiene XML ficticios para pruebas. No contiene informacion real.
@@ -35,7 +36,9 @@ Si prefieres el modo directo sin pantalla web, usa `ejecutar.bat`.
 
 ## Guardar rutas
 
-En la app web usa `MODIFICAR RUTA` para pegar rutas completas de esta computadora. Luego pulsa `GUARDAR`.
+En la app web pega rutas completas de esta computadora y pulsa `GUARDAR RUTAS`.
+
+La app lee directamente desde esas carpetas. No necesitas subir XML desde la pantalla web.
 
 Las rutas se guardan localmente en:
 
@@ -62,6 +65,6 @@ El programa usa la misma clave de instalacion del programa anterior. La clave no
 Para probar sin datos reales:
 
 1. Ejecuta `abrir_app_web.bat`.
-2. Carga `ejemplos\factura_ficticia.xml` desde la pantalla web.
+2. Copia `ejemplos\factura_ficticia.xml` dentro de la carpeta XML configurada.
 3. Presiona `EXTRAER INFORMACION A EXCEL`.
 4. Confirma que se cree un Excel dentro de `salida_excel`.
