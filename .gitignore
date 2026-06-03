@@ -24,6 +24,7 @@ PDF/**/*
 # Archivos privados o claves
 .env
 CONFIGURACION/.activacion_consolidado
+CONFIGURACION/rutas_app_web.json
 *.key
 *.pem
 *.p12

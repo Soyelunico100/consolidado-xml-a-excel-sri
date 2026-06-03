@@ -33,6 +33,18 @@ Esa pagina corre solo en tu computadora. Los XML no se envian a internet.
 
 Si prefieres el modo directo sin pantalla web, usa `ejecutar.bat`.
 
+## Guardar rutas
+
+En la app web usa `MODIFICAR RUTA` para pegar rutas completas de esta computadora. Luego pulsa `GUARDAR`.
+
+Las rutas se guardan localmente en:
+
+```text
+CONFIGURACION\rutas_app_web.json
+```
+
+Ese archivo no se sube a GitHub porque puede contener rutas privadas de cada equipo.
+
 ## Privacidad
 
 No subas XML reales ni Excel generados a GitHub. El archivo `.gitignore` ya ignora:

@@ -21,15 +21,77 @@ import consolidado_xml_a_excel as converter
 HOST = "127.0.0.1"
 PORT = 8765
 BASE_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = converter.CONFIG_DIR / "rutas_app_web.json"
+
+
+def default_paths():
+    return {
+        "xml": str(BASE_DIR / "entrada_xml"),
+        "salida": str(BASE_DIR / "salida_excel"),
+        "procesados": str(BASE_DIR / "procesados"),
+        "errores": str(BASE_DIR / "errores"),
+        "pdf_root": str(BASE_DIR / "PDF"),
+        "pdf_compras": str(BASE_DIR / "PDF" / "PDF Compras"),
+        "pdf_nc": str(BASE_DIR / "PDF" / "PDF Notas de Credito Recibidas"),
+        "pdf_ret": str(BASE_DIR / "PDF" / "PDF Retenciones Recibidas"),
+        "pdf_ventas": str(BASE_DIR / "PDF" / "PDF VENTAS Y RETENCIONES EMITIDAS"),
+    }
+
+
+def clean_path(value):
+    return (value or "").strip().strip('"').strip("'")
+
+
+def load_paths():
+    data = default_paths()
+    try:
+        import json
+
+        saved = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        if isinstance(saved, dict):
+            for key in data:
+                value = clean_path(saved.get(key))
+                if value:
+                    data[key] = value
+    except Exception:
+        pass
+    return data
+
+
+def save_paths(data):
+    import json
+
+    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CONFIG_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def apply_paths(data=None):
+    data = data or load_paths()
+    converter.XML_FOLDER = Path(data["xml"])
+    converter.SALIDA_EXCEL_DIR = Path(data["salida"])
+    converter.PROCESADOS_DIR = Path(data["procesados"])
+    converter.ERRORES_DIR = Path(data["errores"])
+    converter.PDF_ROOT_DIR = Path(data["pdf_root"])
+    converter.PDF_COMPRAS_FOLDER = Path(data["pdf_compras"])
+    converter.PDF_NC_RECIBIDAS_FOLDER = Path(data["pdf_nc"])
+    converter.PDF_RET_RECIBIDAS_FOLDER = Path(data["pdf_ret"])
+    converter.PDF_VENTAS_FOLDER = Path(data["pdf_ventas"])
+    converter.EXCEL_FILE = converter.SALIDA_EXCEL_DIR / "Consolidado XML.xlsx"
+    return data
 
 
 def ensure_folders():
+    apply_paths()
     for folder in (
         converter.XML_FOLDER,
         converter.SALIDA_EXCEL_DIR,
         converter.PROCESADOS_DIR,
         converter.ERRORES_DIR,
         converter.PDF_ROOT_DIR,
+        converter.PDF_COMPRAS_FOLDER,
+        converter.PDF_NC_RECIBIDAS_FOLDER,
+        converter.PDF_RET_RECIBIDAS_FOLDER,
+        converter.PDF_VENTAS_FOLDER,
     ):
         folder.mkdir(parents=True, exist_ok=True)
 
@@ -120,6 +182,7 @@ def run_converter(clave=""):
 
 def render_page(message="", log=""):
     ensure_folders()
+    paths = load_paths()
     entrada = list_files(converter.XML_FOLDER, "*.xml")
     salidas = list_files(converter.SALIDA_EXCEL_DIR, "*.xlsx")
     procesados = list_files(converter.PROCESADOS_DIR, "*.xml")
@@ -142,6 +205,21 @@ def render_page(message="", log=""):
 
     message_html = f'<div class="notice">{html.escape(message)}</div>' if message else ""
     log_html = f"<pre>{html.escape(log)}</pre>" if log else ""
+    path_inputs = [
+        ("xml", "Carpeta XML"),
+        ("salida", "Salida Excel"),
+        ("procesados", "Procesados"),
+        ("errores", "Errores"),
+        ("pdf_root", "Carpeta PDF"),
+        ("pdf_compras", "PDF Compras"),
+        ("pdf_nc", "PDF Notas de credito recibidas"),
+        ("pdf_ret", "PDF Retenciones recibidas"),
+        ("pdf_ventas", "PDF Ventas y retenciones emitidas"),
+    ]
+    rutas_html = "\n".join(
+        f'<label>{label}<input name="{key}" value="{html.escape(paths[key])}"></label>'
+        for key, label in path_inputs
+    )
 
     return f"""<!doctype html>
 <html lang="es">
@@ -204,14 +282,30 @@ def render_page(message="", log=""):
     button.primary {{ background: #183252; border-color: #365b89; }}
     button.danger {{ background: #7a2e12; border-color: var(--gold); }}
     button.light, .button.light {{ background: #f5f7fb; color: #101923; }}
-    input[type=file], input[type=password] {{
+    input[type=file], input[type=password], input[type=text], .routes input, .routes label {{
       width: 100%;
+    }}
+    input[type=file], input[type=password], input[type=text], .routes input {{
       background: #0b1119;
       border: 1px dashed var(--line);
       border-radius: 6px;
       padding: 14px;
       color: var(--text);
     }}
+    .routes {{
+      margin-top: 12px;
+      display: none;
+      gap: 10px;
+    }}
+    .routes.open {{ display: grid; }}
+    .routes label {{
+      color: var(--gold);
+      display: grid;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+    }}
+    .route-actions {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }}
     .notice {{
       margin-bottom: 16px;
       padding: 12px 14px;
@@ -280,6 +374,15 @@ def render_page(message="", log=""):
         <form class="actions" method="post" action="/clear" style="margin-top:12px">
           <button class="danger" type="submit">ELIMINAR XML Y PDF DESCARGADOS</button>
         </form>
+        <button class="light" type="button" onclick="document.querySelector('.routes').classList.toggle('open')">MODIFICAR RUTA</button>
+        <form class="routes" method="post" action="/save_paths">
+          {rutas_html}
+          <div class="route-actions">
+            <button class="primary" type="submit">GUARDAR</button>
+            <button class="light" type="submit" formaction="/reset_paths">RESTAURAR</button>
+          </div>
+          <div class="empty">Pega rutas completas de esta computadora. Se guardan para futuras ejecuciones.</div>
+        </form>
         <div class="actions" style="margin-top:12px">
           <a class="button light" href="/open?folder=base">ABRIR CARPETA DEL PROGRAMA</a>
           <a class="button light" href="/open?folder=salida">ABRIR SALIDA EXCEL</a>
@@ -333,6 +436,14 @@ class AppHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/clear":
             self.handle_clear()
+            return
+        if parsed.path == "/save_paths":
+            self.handle_save_paths()
+            return
+        if parsed.path == "/reset_paths":
+            save_paths(default_paths())
+            apply_paths()
+            self.send_html(render_page("Rutas restauradas."))
             return
         self.send_error(404)
 
@@ -419,6 +530,20 @@ class AppHandler(BaseHTTPRequestHandler):
                     except OSError:
                         pass
         self.send_html(render_page(f"Archivos eliminados: {count}"))
+
+    def handle_save_paths(self):
+        length = int(self.headers.get("Content-Length", "0"))
+        body = self.rfile.read(length).decode("utf-8", errors="replace")
+        form = parse_qs(body)
+        current = load_paths()
+        data = {}
+        for key, default_value in current.items():
+            value = clean_path(form.get(key, [default_value])[0])
+            data[key] = value or default_value
+        save_paths(data)
+        apply_paths(data)
+        ensure_folders()
+        self.send_html(render_page("Rutas guardadas correctamente."))
 
     def log_message(self, fmt, *args):
         return
