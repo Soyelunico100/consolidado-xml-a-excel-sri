@@ -56,6 +56,7 @@ Esto permite mover o descargar el proyecto en otra computadora sin cambiar confi
 ## Solucion de problemas
 
 - Si `instalar.bat` falla, revisa que Python este instalado y disponible en PATH.
+- Si falla instalando `streamlit`, descarga la version actualizada del repositorio: Streamlit ya no es necesario para el uso normal.
 - Si el Excel no se guarda, cierra cualquier archivo Excel abierto en `salida_excel` y vuelve a ejecutar.
 - Si un XML aparece en `errores`, revisa que sea un XML autorizado del SRI y que no este incompleto.
 - Si no aparece ningun dato, confirma que los XML esten dentro de `entrada_xml`.

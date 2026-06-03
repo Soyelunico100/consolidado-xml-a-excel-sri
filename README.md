@@ -20,15 +20,9 @@ Al terminar, los XML procesados correctamente se mueven a `procesados`. Los XML 
 - `errores`: aqui se mueven los XML con problema.
 - `ejemplos`: contiene XML ficticios para pruebas. No contiene informacion real.
 
-## Interfaz opcional
+## Ejecucion
 
-Si prefieres usar una pantalla local en el navegador, ejecuta:
-
-```bat
-ejecutar_streamlit.bat
-```
-
-La interfaz Streamlit es opcional. El flujo principal recomendado es `ejecutar.bat`.
+El flujo recomendado es `ejecutar.bat`. La interfaz Streamlit queda fuera de la instalacion normal para evitar errores de dependencias en Windows.
 
 ## Privacidad
 
