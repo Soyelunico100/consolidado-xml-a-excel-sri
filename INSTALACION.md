@@ -27,21 +27,35 @@ C:\XML_A_EXCEL_SRI
 
 ## Ejecutar
 
-1. Copia tus XML reales del SRI en:
+1. Ejecuta:
+
+```text
+abrir_app_web.bat
+```
+
+2. Se abrira una pantalla local en el navegador.
+
+3. Carga tus XML reales del SRI desde la pantalla web o copialos manualmente en:
 
 ```text
 entrada_xml
 ```
 
-2. Ejecuta:
+4. Presiona:
+
+```text
+EXTRAER INFORMACION A EXCEL
+```
+
+Tambien puedes ejecutar directamente:
 
 ```text
 ejecutar.bat
 ```
 
-3. La primera vez en cada computadora, escribe la clave de instalacion.
+5. La primera vez en cada computadora, escribe la clave de instalacion.
 
-4. El Excel se generara en:
+6. El Excel se generara en:
 
 ```text
 salida_excel
