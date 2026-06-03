@@ -1,0 +1,43 @@
+# Entorno local
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+
+# Datos reales y salidas generadas
+entrada_xml/*
+!entrada_xml/.gitkeep
+procesados/*
+!procesados/.gitkeep
+errores/*
+!errores/.gitkeep
+salida_excel/*
+!salida_excel/.gitkeep
+PDF/**/*
+!PDF/.gitkeep
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+
+# Archivos privados o claves
+.env
+CONFIGURACION/.activacion_consolidado
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+secretos/
+privado/
+datos_privados/
+xml_reales/
+
+# Sistema/editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
